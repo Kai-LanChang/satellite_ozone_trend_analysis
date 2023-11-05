@@ -126,20 +126,22 @@ for (j in 1:24){
         pt=ccf(dt$enso, dt$o3d, lag.max=6, pl=F)
         op_enso[i,j]=pt$acf[which.max(abs(pt$acf))]
         op_ensolag[i,j]=pt$lag[which(pt$acf==pt$acf[which.max(abs(pt$acf))], arr.ind=T)]
-        dt$ensolag=lag_fn(x=dt$enso, k=op_ensolag[i,j])
+        dt$ensolag=lag_fn(x=dt$enso, k=-op_ensolag[i,j])
         find_row=which(enso$year==dt[is.na(dt$ensolag),]$year[1] & enso$month==dt[is.na(dt$ensolag),]$month[1])
+
         #fill lag NA data if the ENSO record is available
         if (!is.na(dt[is.na(dt$ensolag),]$year[1])){
         if (dt[is.na(dt$ensolag),]$year[1] <= 2005) {
-            dt[is.na(dt$ensolag),"ensolag"]=enso[(find_row-op_ensolag[i,j]):(find_row-1),]$enso} else {
-            dt[is.na(dt$ensolag),"ensolag"]=enso[(find_row-op_ensolag[i,j]):(find_row-2*op_ensolag[i,j]-1),]$enso}}
+            dt[is.na(dt$ensolag),"ensolag"]=enso[(find_row+op_ensolag[i,j]):(find_row-1),]$enso} else {
+            dt[is.na(dt$ensolag),"ensolag"]=enso[(find_row+op_ensolag[i,j]):(find_row+2*op_ensolag[i,j]-1),]$enso}}
+        dt=dt[dt$ensolag!=-999.00,]
         mbb=t(replicate(1000, mbfun(formula=o3d~ind+ensolag,data=dt,tau=0.5)))
         op_slope[i,j]=coef(rq(o3d~ind+ensolag, data=dt, tau=0.5))[2]*12
         op_sigma[i,j]=t(apply(mbb, 2, sd, na.rm=TRUE))[2]*12 
     }
 print(paste(100*j/24, "% complete", sep=""))
 }
-
+               
 #=========================================================
 #plot results
 #=========================================================
