@@ -6,6 +6,7 @@ library(quantreg)
 mlo=read.csv("mlo.csv")
 head(mlo)
 
+#Deseasonalization based on the 2000-2020 climatology
 base=mlo[mlo$year>=2000 & mlo$year<=2020,]
 seasonality=predict(lm(y~sin(2*pi*month/12)+cos(2*pi*month/12)+sin(2*pi*month/6)+cos(2*pi*month/6), data=base), newdata=data.frame(month=1:12))
 mlo=merge(mlo, data.frame(month=1:12, yd=seasonality), by="month")
@@ -28,7 +29,7 @@ mbfun=function(formula,data,tau){
 set.seed(2013)
 formula=yd~x
 ##note: one can directly use formula=y~x+sin(2*pi*month/12)+cos(2*pi*month/12)+sin(2*pi*month/6)+cos(2*pi*month/6)
-##if data are not deseasonalized in the previous step
+##if data are not deseasonalized in the previous step (but this means that data are deseasonalized using the entire period)
 fit=coef(rq(formula=formula, data=mlo, tau=0.5))*12 #intercept and slope
 op=t(replicate(1000, mbfun(formula=formula,data=mlo,tau=0.5)))
 fit_se=apply(op, 2, sd, na.rm=TRUE)*12 #MBB standard error for intercept and slope
