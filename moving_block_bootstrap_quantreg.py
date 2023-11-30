@@ -33,6 +33,8 @@ def mbfun(formula, data, tau):
 np.random.seed(2013)
 #median intercept and slope
 fit = smf.quantreg("yd~x", data=mlo).fit(q=0.5).params*12
+##note: one can directly use "y~x+np.sin(2*np.pi*month/12)+np.cos(2*np.pi*month/12)+np.sin(2*np.pi*month/6)+np.cos(2*np.pi*month/6)"
+##if data are not deseasonalized in the previous step (but this means that data are deseasonalized using the entire period)
 
 #MBB standard error for intercept and slope
 op = [mbfun(formula="yd~x", data=mlo, tau=0.5) for _ in range(1000)]
