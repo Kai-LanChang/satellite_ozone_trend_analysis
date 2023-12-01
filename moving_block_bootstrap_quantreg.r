@@ -30,9 +30,12 @@ set.seed(2013)
 formula=yd~x
 ##note: one can directly use formula=y~x+sin(2*pi*month/12)+cos(2*pi*month/12)+sin(2*pi*month/6)+cos(2*pi*month/6)
 ##if data are not deseasonalized in the previous step (but this means that data are deseasonalized using the entire period)
-fit=coef(rq(formula=formula, data=mlo, tau=0.5))*12 #intercept and slope
+fit=coef(rq(formula=formula, data=mlo, tau=0.5)) #intercept and slope
 op=t(replicate(1000, mbfun(formula=formula,data=mlo,tau=0.5)))
-fit_se=apply(op, 2, sd, na.rm=TRUE)*12 #MBB standard error for intercept and slope
+fit_se=apply(op, 2, sd, na.rm=TRUE) #MBB standard error for intercept and slope
 fit_pv=2*pt(q=abs(fit/fit_se), df=nrow(mlo)-2, lower.tail=FALSE) #MBB p value for intercept and slop
+##The unit of trend value and SE is ppbv per month, 
+##one can convert it to ppbv per year by multiplying a factor of 12.
+               
 #multiple quantiles 
 #op=t(replicate(1000, mbfun(formula=yd~x,data=mlo,tau=seq(0.1,0.9,by=0.1))[2,]))
