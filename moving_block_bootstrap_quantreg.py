@@ -8,7 +8,7 @@ import statsmodels.formula.api as smf
 mlo = pd.read_csv("mlo.csv")
 mlo.head()
 
-#derive the seasonal cycle
+#derive the seasonal cycle based on the 2000-2020 climatology
 base = mlo[(mlo["year"] >= 2000) & (mlo["year"] <= 2020)]
 seasonality = smf.ols("y~np.sin(2*np.pi*month/12)+np.cos(2*np.pi*month/12)+np.sin(2*np.pi*month/6)+np.cos(2*np.pi*month/6)", base).fit(method="qr").predict(pd.DataFrame({"month": range(1, 13)}))
 
