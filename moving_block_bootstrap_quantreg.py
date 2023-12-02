@@ -44,6 +44,6 @@ fit_se = np.nanstd(op, axis=0)
 fit_pv = 2*scipy.stats.t.sf(x=abs(fit/fit_se), df=len(mlo)-2)
 
 #print summary
-print(pd.DataFrame({'fit coef': fit, 'standard error': fit_se, 'SNR (T-value)': fit/fit_se, 'p-value': fit_se})
+print(pd.DataFrame({'fit coef': fit, 'standard error': fit_se, 'SNR (T-value)': fit/fit_se, 'p-value': fit_se}))
 #The unit of trend value and SE is ppbv per month, 
 #one can convert it to ppbv per year by multiplying a factor of 12.
