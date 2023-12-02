@@ -32,15 +32,18 @@ def mbfun(formula, data, tau):
 
 np.random.seed(2013)
 #median intercept and slope
+#note: one can directly use "y~x+np.sin(2*np.pi*month/12)+np.cos(2*np.pi*month/12)+np.sin(2*np.pi*month/6)+np.cos(2*np.pi*month/6)"
+#if data are not deseasonalized in the previous step (but this means that data are deseasonalized using the entire period)
 fit = smf.quantreg("yd~x", data=mlo).fit(q=0.5).params
-##note: one can directly use "y~x+np.sin(2*np.pi*month/12)+np.cos(2*np.pi*month/12)+np.sin(2*np.pi*month/6)+np.cos(2*np.pi*month/6)"
-##if data are not deseasonalized in the previous step (but this means that data are deseasonalized using the entire period)
 
 #MBB standard error for intercept and slope
 op = [mbfun(formula="yd~x", data=mlo, tau=0.5) for _ in range(1000)]
 fit_se = np.nanstd(op, axis=0)
-##The unit of trend value and SE is ppbv per month, 
-##one can convert it to ppbv per year by multiplying a factor of 12.
 
 #p value for intercept and slope
 fit_pv = 2*scipy.stats.t.sf(x=abs(fit/fit_se), df=len(mlo)-2)
+
+#print summary
+print(pd.DataFrame({'fit coef': fit, 'standard error': fit_se, 'SNR (T-value)': fit/fit_se, 'p-value': fit_se})
+#The unit of trend value and SE is ppbv per month, 
+#one can convert it to ppbv per year by multiplying a factor of 12.
